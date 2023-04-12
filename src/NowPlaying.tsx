@@ -11,14 +11,21 @@ export const NowPlaying: React.FC<{}> = () => {
   return (
     <div
       css={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
+        display: "grid",
+        gridTemplateColumns: "1fr 300px 1fr",
+        gap: "1rem",
         height: "100%",
       }}
     >
       {/* Song info */}
-      <div css={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+      <div
+        css={{
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+          maxWidth: "350px",
+        }}
+      >
         {/* Album art */}
         <div
           css={{
@@ -43,13 +50,20 @@ export const NowPlaying: React.FC<{}> = () => {
       </div>
 
       {/* Main Controls */}
-      <div>
+      <div
+        css={{
+          display: "grid",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         {/* Controls (shuffle, back, play, next)} */}
         <div
           css={{
             flex: "0",
             display: "flex",
             justifyContent: "space-around",
+            alignItems: "center",
             marginBottom: "0.5rem",
           }}
         >
@@ -87,7 +101,13 @@ export const NowPlaying: React.FC<{}> = () => {
       </div>
 
       {/* Volume Slider */}
-      <div>
+      <div
+        css={{
+          display: "grid",
+          alignItems: "center",
+          justifyContent: "flex-end",
+        }}
+      >
         <div>
           <input
             type="range"
