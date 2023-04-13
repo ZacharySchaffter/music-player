@@ -198,7 +198,11 @@ export const Library: React.FC<{}> = () => {
             }}
             theme="Custom"
             noDataComponent={
-              <div css={{ padding: "2rem" }}>Add some songs!</div>
+              <div css={{ padding: "2rem" }}>
+                {activePlaylist?.songs.length === 0
+                  ? "Add some songs!"
+                  : "No songs match current filter"}
+              </div>
             }
           />
         </div>
