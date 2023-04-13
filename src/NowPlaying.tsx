@@ -3,7 +3,7 @@ import { usePlayerContext } from "./context";
 import { secondsToMinutes } from "./utils";
 export const NowPlaying: React.FC<{}> = () => {
   const { player, togglePlay, toggleShuffle, setVolume } = usePlayerContext();
-  const { activeSong, isLoading, volume } = player;
+  const { activeSong, isLoading, isShuffled, volume } = player;
 
   // Don't render player if still loading
   if (isLoading || !activeSong) return null;
@@ -69,6 +69,7 @@ export const NowPlaying: React.FC<{}> = () => {
         >
           <button
             type="button"
+            css={isShuffled ? { backgroundColor: "black" } : {}}
             onClick={() => {
               toggleShuffle();
             }}
@@ -88,10 +89,17 @@ export const NowPlaying: React.FC<{}> = () => {
         </div>
 
         {/* Scrubber */}
-        <div css={{ display: "flex", fontSize: "8px", gap: ".25rem" }}>
+        <div
+          css={{
+            display: "flex",
+            fontSize: "12px",
+            gap: "1rem",
+            alignItems: "center",
+          }}
+        >
           <div>0:00</div>
           <div
-            css={{ height: "10px", width: "200px", backgroundColor: "white" }}
+            css={{ height: "8px", width: "200px", backgroundColor: "white" }}
           ></div>
           <div>{secondsToMinutes(activeSong.songLength)}</div>
         </div>
