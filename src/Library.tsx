@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import { usePlayerContext } from "./context";
 import DataTable, { createTheme } from "react-data-table-component";
 import { Song } from "./types";
-
+import { secondsToMinutes } from "./utils";
 createTheme(
   "Custom",
   {
@@ -41,7 +41,6 @@ export const Library: React.FC<{}> = () => {
   const { player, playlists, setActiveSong, addSongToPlaylist } =
     usePlayerContext();
   const { activePlaylist, isLoading } = player;
-  const table = useRef<HTMLDivElement | null>(null);
 
   const [filter, setFilter] = useState("");
   const songs: Song[] = activePlaylist?.songs || [];
@@ -92,8 +91,7 @@ export const Library: React.FC<{}> = () => {
     {
       name: "Length",
       maxWidth: "5%",
-      selector: (row: Song) =>
-        `${Math.floor(row.songLength / 60)}:${row.songLength % 60}`,
+      selector: (row: Song) => secondsToMinutes(row.songLength),
       sortable: true,
     },
     {
@@ -105,9 +103,8 @@ export const Library: React.FC<{}> = () => {
           <select
             onChange={(e) => {
               // Add this song to playlist, and reset this select
-              console.log(song.id, parseInt(e.target.value));
               addSongToPlaylist(song.id, parseInt(e.target.value));
-              // e.target.value = "default";
+              e.target.value = "";
             }}
             defaultValue=""
             css={{ width: "100%" }}
@@ -188,9 +185,8 @@ export const Library: React.FC<{}> = () => {
             css={{ flex: 1 }}
           />
         </div>
-        <div ref={table} css={{}}>
+        <div>
           <DataTable
-            keyField={"customKey"}
             columns={columns}
             data={data}
             highlightOnHover={true}

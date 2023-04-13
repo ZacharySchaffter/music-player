@@ -1,6 +1,6 @@
 import React from "react";
 import { usePlayerContext } from "./context";
-
+import { secondsToMinutes } from "./utils";
 export const NowPlaying: React.FC<{}> = () => {
   const { player, togglePlay, toggleShuffle, setVolume } = usePlayerContext();
   const { activeSong, isLoading, volume } = player;
@@ -93,10 +93,7 @@ export const NowPlaying: React.FC<{}> = () => {
           <div
             css={{ height: "10px", width: "200px", backgroundColor: "white" }}
           ></div>
-          <div>
-            {Math.floor(activeSong.songLength / 60)}:
-            {activeSong.songLength % 60}
-          </div>
+          <div>{secondsToMinutes(activeSong.songLength)}</div>
         </div>
       </div>
 
