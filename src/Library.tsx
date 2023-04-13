@@ -45,13 +45,15 @@ export const Library: React.FC<{}> = () => {
   const [filter, setFilter] = useState("");
   const songs: Song[] = activePlaylist?.songs || [];
   const filteredSongs = useMemo(() => {
+    if (!filter) return songs;
+
+    const regex = new RegExp(filter, "i");
+
     return !filter
       ? songs
       : songs.filter(
           (s) =>
-            s.title.includes(filter) ||
-            s.album.includes(filter) ||
-            s.artist.includes(filter)
+            regex.test(s.title) || regex.test(s.album) || regex.test(s.artist)
         );
   }, [filter, activePlaylist?.songs]);
 
@@ -196,7 +198,11 @@ export const Library: React.FC<{}> = () => {
             }}
             theme="Custom"
             noDataComponent={
-              <div css={{ padding: "2rem" }}>Add some songs!</div>
+              <div css={{ padding: "2rem" }}>
+                {activePlaylist?.songs.length === 0
+                  ? "Add some songs!"
+                  : "No songs match current filter"}
+              </div>
             }
           />
         </div>
