@@ -15,11 +15,11 @@ createTheme(
     },
     context: {
       background: "#242424",
-      cursor: "pointer",
       text: "rgba(255, 255, 255, 0.87);",
     },
     divider: {
       default: "rgba(255, 255, 255, 0.87);",
+      hover: "rgba(255, 255, 255, 0.87);",
     },
     button: {
       default: "#2aa198",
@@ -30,12 +30,16 @@ createTheme(
     sortFocus: {
       default: "#2aa198",
     },
+    highlightOnHover: {
+      default: "#151515",
+    },
   },
   "dark"
 );
 
 export const Library: React.FC<{}> = () => {
-  const { player, setActivePlaylist, setActiveSong } = usePlayerContext();
+  const { player, playlists, setActiveSong, addSongToPlaylist } =
+    usePlayerContext();
   const { activePlaylist, isLoading } = player;
   const table = useRef<HTMLDivElement | null>(null);
 
@@ -52,50 +56,86 @@ export const Library: React.FC<{}> = () => {
         );
   }, [filter, activePlaylist?.songs]);
 
+  const editablePlaylists = useMemo(
+    () => playlists.filter((pl) => pl.id !== 0),
+    [playlists]
+  );
+
   const columns = [
     {
+      name: "Art",
+      maxWidth: "5%",
+      cell: () => (
+        <div
+          css={{ aspectRatio: "1", width: "1.5rem", backgroundColor: "white" }}
+        />
+      ),
+    },
+    {
       name: "Song",
+      maxWidth: "30%",
       selector: (row: Song) => row.title,
       sortable: true,
     },
     {
       name: "Album",
+      maxWidth: "20%",
       selector: (row: Song) => row.album,
       sortable: true,
     },
     {
       name: "Artist",
+      maxWidth: "20%",
       selector: (row: Song) => row.artist,
       sortable: true,
     },
     {
       name: "Length",
+      maxWidth: "5%",
       selector: (row: Song) =>
         `${Math.floor(row.songLength / 60)}:${row.songLength % 60}`,
       sortable: true,
     },
+    {
+      name: "Actions",
+      maxWidth: "15%",
+      cell: (song: Song) => {
+        // TODO: Performance concerns around time complexity of the filter.map combo
+        return (
+          <select
+            onChange={(e) => {
+              // Add this song to playlist, and reset this select
+              console.log(song.id, parseInt(e.target.value));
+              addSongToPlaylist(song.id, parseInt(e.target.value));
+              // e.target.value = "default";
+            }}
+            defaultValue=""
+            css={{ width: "100%" }}
+          >
+            <option disabled={true} value="">
+              Add to...
+            </option>
+
+            {editablePlaylists
+              .filter((pl) => !pl.songs.find((s) => s.id === song.id))
+              .map((pl) => (
+                <option value={pl.id}>{pl.title}</option>
+              ))}
+          </select>
+        );
+      },
+    },
   ];
 
-  const data = filteredSongs || [];
-
-  // Bind delegated click event handler to datatable
-  useEffect(() => {
-    if (!table.current) return;
-
-    // Hacky, but time constraints necessitate grabbing the click somehow
-    const handleClick = (e: Event) => {
-      const id = (e.target as HTMLElement).getAttribute("id");
-      console.log(id);
-      if (!id) return;
-      const songId = parseInt(id.replace("row-", ""));
-    };
-
-    table.current.addEventListener("click", handleClick);
-
-    return () => {
-      table?.current?.removeEventListener("click", handleClick);
-    };
-  }, [table]);
+  const data =
+    filteredSongs.map((song) => ({
+      ...song,
+      customKey:
+        `${activePlaylist?.title}-${song.title}-${song.album}`.replaceAll(
+          " ",
+          "_"
+        ),
+    })) || [];
 
   // If loading, render loader
   if (isLoading) {
@@ -148,10 +188,13 @@ export const Library: React.FC<{}> = () => {
             css={{ flex: 1 }}
           />
         </div>
-        <div ref={table}>
+        <div ref={table} css={{}}>
           <DataTable
+            keyField={"customKey"}
             columns={columns}
             data={data}
+            highlightOnHover={true}
+            pointerOnHover={true}
             onRowClicked={(song) => {
               setActiveSong(song.id);
             }}

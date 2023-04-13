@@ -60,6 +60,18 @@ function App() {
     setPlaylists([...playlists, newPlaylist]);
   }, [playlists, setPlaylists]);
 
+  const addSongToPlaylist = useCallback(
+    (songId: Song["id"], playlistId: Playlist["id"]) => {
+      const song = songs.find((s) => s.id === songId);
+      if (!song) return;
+      const updatedPlaylists: Playlist[] = playlists.map((pl) =>
+        pl.id === playlistId ? { ...pl, songs: [...pl.songs, song] } : pl
+      );
+      setPlaylists(updatedPlaylists);
+    },
+    [playlists]
+  );
+
   // Memoize full context object to prevent needless re-renders
   const ctx = useMemo(
     () => ({
@@ -72,6 +84,7 @@ function App() {
       setActivePlaylist: setActivePlaylistId,
       setActiveSong: setActiveSongId,
       setVolume,
+      addSongToPlaylist,
     }),
     [
       songs,

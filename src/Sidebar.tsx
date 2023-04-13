@@ -47,8 +47,8 @@ export const Sidebar: React.FC<{}> = () => {
     >
       {/* Playlists */}
       <ul>
-        {menuItems.map((itm) => (
-          <li css={{ borderBottom: "1px solid white" }}>
+        {menuItems.map((itm, index) => (
+          <li key={index} css={{ borderBottom: "1px solid white" }}>
             <SidebarButton
               label={itm.title}
               isActive={(activePlaylist?.id || null) === itm.id}

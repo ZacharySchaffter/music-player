@@ -11,6 +11,7 @@ type PlayerContextType = {
   setActivePlaylist: (id: Playlist["id"]) => void;
   setActiveSong: (id: Song["id"]) => void;
   setVolume: (volume: number) => void;
+  addSongToPlaylist: (songId: Song["id"], playlistId: Playlist["id"]) => void;
 };
 
 const PlayerContext = React.createContext<PlayerContextType>({
@@ -30,6 +31,7 @@ const PlayerContext = React.createContext<PlayerContextType>({
   setActivePlaylist: (id: Playlist["id"]) => {},
   setActiveSong: (id: Song["id"]) => {},
   setVolume: (volume: number) => {},
+  addSongToPlaylist: (songId: Song["id"], playlistId: Playlist["id"]) => {},
 });
 
 type ProviderProps = {
