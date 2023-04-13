@@ -47,8 +47,8 @@ export const Sidebar: React.FC<{}> = () => {
     >
       {/* Playlists */}
       <ul>
-        {menuItems.map((itm) => (
-          <li css={{ borderBottom: "1px solid white" }}>
+        {menuItems.map((itm, index) => (
+          <li key={index} css={{ borderBottom: "1px solid white" }}>
             <SidebarButton
               label={itm.title}
               isActive={(activePlaylist?.id || null) === itm.id}
@@ -62,8 +62,17 @@ export const Sidebar: React.FC<{}> = () => {
 
       {/* Create Playlist button */}
       <div>
-        <button type="button" onClick={() => createPlaylist()}>
-          Create Playlist
+        <button
+          type="button"
+          onClick={() => createPlaylist()}
+          css={{
+            display: "block",
+            width: "100%",
+            padding: "0.5rem",
+            fontSize: "1.25rem",
+          }}
+        >
+          + Create Playlist
         </button>
       </div>
     </div>

@@ -1,9 +1,9 @@
 import React from "react";
 import { usePlayerContext } from "./context";
-
+import { secondsToMinutes } from "./utils";
 export const NowPlaying: React.FC<{}> = () => {
   const { player, togglePlay, toggleShuffle, setVolume } = usePlayerContext();
-  const { activeSong, isLoading, volume } = player;
+  const { activeSong, isLoading, isShuffled, volume } = player;
 
   // Don't render player if still loading
   if (isLoading || !activeSong) return null;
@@ -11,14 +11,21 @@ export const NowPlaying: React.FC<{}> = () => {
   return (
     <div
       css={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
+        display: "grid",
+        gridTemplateColumns: "1fr 300px 1fr",
+        gap: "1rem",
         height: "100%",
       }}
     >
       {/* Song info */}
-      <div css={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+      <div
+        css={{
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+          maxWidth: "350px",
+        }}
+      >
         {/* Album art */}
         <div
           css={{
@@ -43,18 +50,26 @@ export const NowPlaying: React.FC<{}> = () => {
       </div>
 
       {/* Main Controls */}
-      <div>
+      <div
+        css={{
+          display: "grid",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         {/* Controls (shuffle, back, play, next)} */}
         <div
           css={{
             flex: "0",
             display: "flex",
             justifyContent: "space-around",
+            alignItems: "center",
             marginBottom: "0.5rem",
           }}
         >
           <button
             type="button"
+            css={isShuffled ? { backgroundColor: "black" } : {}}
             onClick={() => {
               toggleShuffle();
             }}
@@ -74,20 +89,30 @@ export const NowPlaying: React.FC<{}> = () => {
         </div>
 
         {/* Scrubber */}
-        <div css={{ display: "flex", fontSize: "8px", gap: ".25rem" }}>
+        <div
+          css={{
+            display: "flex",
+            fontSize: "12px",
+            gap: "1rem",
+            alignItems: "center",
+          }}
+        >
           <div>0:00</div>
           <div
-            css={{ height: "10px", width: "200px", backgroundColor: "white" }}
+            css={{ height: "8px", width: "200px", backgroundColor: "white" }}
           ></div>
-          <div>
-            {Math.floor(activeSong.songLength / 60)}:
-            {activeSong.songLength % 60}
-          </div>
+          <div>{secondsToMinutes(activeSong.songLength)}</div>
         </div>
       </div>
 
       {/* Volume Slider */}
-      <div>
+      <div
+        css={{
+          display: "grid",
+          alignItems: "center",
+          justifyContent: "flex-end",
+        }}
+      >
         <div>
           <input
             type="range"
