@@ -1,9 +1,105 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { usePlayerContext } from "./context";
 import { secondsToMinutes } from "./utils";
+import {
+  BiPlay,
+  BiPause,
+  BiShuffle,
+  BiSkipPrevious,
+  BiSkipNext,
+} from "react-icons/bi";
+
+const CircleButton: React.FC<
+  Record<string, unknown> & {
+    css: Record<string, string | number>;
+    children: ReactNode;
+  }
+> = ({ css, children, ...props }) => {
+  return (
+    <button
+      {...props}
+      css={{
+        borderRadius: "50%",
+        aspectRatio: "1",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#000",
+        textAlign: "center",
+        ...css,
+      }}
+    >
+      {children}
+    </button>
+  );
+};
+
+const Controls: React.FC = () => {
+  const { player, togglePlay, toggleShuffle } = usePlayerContext();
+  const { isPlaying, isShuffled } = player;
+
+  return (
+    <div
+      css={{
+        display: "grid",
+        gridTemplateColumns: "repeat(2, 1fr) auto repeat(2, 1fr)",
+        fontSize: "1.5rem",
+        justifyContent: "center",
+      }}
+    >
+      <CircleButton
+        title="Shuffle"
+        type="button"
+        css={{
+          width: "70%",
+          justifySelf: "center",
+          alignSelf: "center",
+          fontSize: ".75em",
+          ...(isShuffled ? { color: "limegreen" } : {}),
+        }}
+        onClick={() => {
+          toggleShuffle();
+        }}
+      >
+        <BiShuffle />
+      </CircleButton>
+      <CircleButton
+        type="button"
+        title="Back"
+        css={{ width: "70%", justifySelf: "center", alignSelf: "center" }}
+      >
+        <BiSkipPrevious />
+      </CircleButton>
+      <CircleButton
+        type="button"
+        css={{
+          fontSize: "2em",
+          justifySelf: "center",
+          alignSelf: "center",
+        }}
+        onClick={() => {
+          togglePlay();
+        }}
+      >
+        {isPlaying ? <BiPause /> : <BiPlay />}
+      </CircleButton>
+      <CircleButton
+        type="button"
+        css={{
+          justifySelf: "center",
+          alignSelf: "center",
+          width: "70%",
+        }}
+      >
+        <BiSkipNext />
+      </CircleButton>
+    </div>
+  );
+};
+
 export const NowPlaying: React.FC<{}> = () => {
-  const { player, togglePlay, toggleShuffle, setVolume } = usePlayerContext();
-  const { activeSong, isLoading, isShuffled, volume } = player;
+  const { player, setVolume } = usePlayerContext();
+  const { activeSong, isLoading, volume } = player;
 
   // Don't render player if still loading
   if (isLoading || !activeSong) return null;
@@ -57,36 +153,7 @@ export const NowPlaying: React.FC<{}> = () => {
           justifyContent: "center",
         }}
       >
-        {/* Controls (shuffle, back, play, next)} */}
-        <div
-          css={{
-            flex: "0",
-            display: "flex",
-            justifyContent: "space-around",
-            alignItems: "center",
-            marginBottom: "0.5rem",
-          }}
-        >
-          <button
-            type="button"
-            css={isShuffled ? { backgroundColor: "black" } : {}}
-            onClick={() => {
-              toggleShuffle();
-            }}
-          >
-            Shuffle
-          </button>
-          <button type="button">Back</button>
-          <button
-            type="button"
-            onClick={() => {
-              togglePlay();
-            }}
-          >
-            Play
-          </button>
-          <button type="button">Next</button>
-        </div>
+        <Controls />
 
         {/* Scrubber */}
         <div
