@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useRef, useEffect, ReactNode } from "react";
 import { usePlayerContext } from "./context";
 import DataTable, { createTheme } from "react-data-table-component";
 import { Song } from "./types";
@@ -195,6 +195,9 @@ export const Library: React.FC<{}> = () => {
               setActiveSong(song.id);
             }}
             theme="Custom"
+            noDataComponent={
+              <div css={{ padding: "2rem" }}>Add some songs!</div>
+            }
           />
         </div>
       </div>
